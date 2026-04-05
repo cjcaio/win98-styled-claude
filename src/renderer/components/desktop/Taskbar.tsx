@@ -6,6 +6,7 @@ import ChatIcon from '@/components/icons/ChatIcon'
 import FolderIcon from '@/components/icons/FolderIcon'
 import RecycleBinIcon from '@/components/icons/RecycleBinIcon'
 import SettingsIcon from '@/components/icons/SettingsIcon'
+import BrowserIcon from '@/components/icons/BrowserIcon'
 import styles from './Taskbar.module.css'
 
 function appIcon(appId: string) {
@@ -13,6 +14,7 @@ function appIcon(appId: string) {
     case 'chat':        return <ChatIcon size={14} />
     case 'explorer':    return <FolderIcon size={14} />
     case 'recycle-bin': return <RecycleBinIcon size={14} />
+    case 'browser':     return <BrowserIcon size={14} />
     default:            return <SettingsIcon size={14} />
   }
 }

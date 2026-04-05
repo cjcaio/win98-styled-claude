@@ -231,3 +231,116 @@
   min-height: 38px;
   max-height: 80px;
 }
+
+/* ── No API Key screen ── */
+.noKeyScreen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 20px;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.noKeyIcon {
+  opacity: 0.6;
+  margin-bottom: 4px;
+}
+
+.noKeyTitle {
+  font-family: var(--c98-font);
+  font-size: 15px;
+  font-weight: bold;
+  color: var(--c98-black);
+  margin: 0;
+}
+
+.noKeyBody {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 11px;
+  font-family: var(--c98-font);
+  color: var(--c98-black);
+}
+
+.noKeyBody p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.noKeyNote {
+  background: #FFFBE6;
+  border: 1px solid #C8A000;
+  border-left: 3px solid #C8A000;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.noKeyNote strong {
+  color: #806000;
+}
+
+.noKeyNote p {
+  margin: 0;
+  color: #604000;
+  line-height: 1.5;
+}
+
+.noKeyOptions {
+  font-weight: bold;
+  margin: 0;
+}
+
+.noKeyButtons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.noKeyOption {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 140px;
+}
+
+.noKeyBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+  width: 100%;
+  min-width: unset;
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
+.noKeyHint {
+  font-size: 10px;
+  color: var(--c98-border-darkest);
+  line-height: 1.4;
+  text-align: center;
+}
+
+.noKeyDivider {
+  height: 1px;
+  background: var(--c98-border-dark);
+  margin: 4px 0;
+}
+
+.noKeySettingsBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  align-self: center;
+  font-size: 11px;
+  min-width: unset;
+  padding: 4px 12px;
+}

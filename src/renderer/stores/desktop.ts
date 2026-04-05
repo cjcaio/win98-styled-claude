@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export type AppId = 'chat' | 'explorer' | 'recycle-bin' | 'settings'
+export type AppId = 'chat' | 'explorer' | 'recycle-bin' | 'settings' | 'browser'
 
 export interface WindowState {
   id: string
@@ -21,9 +21,11 @@ interface DesktopState {
   startMenuOpen: boolean
   booted: boolean
   loggedIn: boolean
+  pendingBrowserUrl: string | null
 
   // Actions
   openApp: (appId: AppId) => void
+  openBrowser: (url: string) => void
   closeWindow: (windowId: string) => void
   focusWindow: (windowId: string) => void
   minimizeWindow: (windowId: string) => void
@@ -35,13 +37,15 @@ interface DesktopState {
   closeStartMenu: () => void
   setBoot: (booted: boolean) => void
   setLoggedIn: (loggedIn: boolean) => void
+  clearPendingBrowserUrl: () => void
 }
 
 const APP_DEFAULTS: Record<AppId, { title: string; width: number; height: number }> = {
-  chat: { title: 'Claude Chat', width: 700, height: 500 },
-  explorer: { title: 'My Documents', width: 600, height: 450 },
-  'recycle-bin': { title: 'Recycle Bin', width: 500, height: 400 },
-  settings: { title: 'Control Panel', width: 450, height: 380 }
+  chat:          { title: 'Claude Chat',     width: 700,  height: 500 },
+  explorer:      { title: 'My Documents',    width: 600,  height: 450 },
+  'recycle-bin': { title: 'Recycle Bin',     width: 500,  height: 400 },
+  settings:      { title: 'Control Panel',   width: 450,  height: 380 },
+  browser:       { title: 'Internet Explorer', width: 960, height: 680 }
 }
 
 let windowCounter = 0
@@ -52,22 +56,15 @@ export const useDesktopStore = create<DesktopState>((set, get) => ({
   startMenuOpen: false,
   booted: false,
   loggedIn: false,
+  pendingBrowserUrl: null,
 
   openApp: (appId) => {
     const state = get()
-    // If app already open and not minimized, focus it
     const existing = state.windows.find((w) => w.appId === appId && !w.isMinimized)
-    if (existing) {
-      get().focusWindow(existing.id)
-      return
-    }
+    if (existing) { get().focusWindow(existing.id); return }
 
-    // If minimized, restore it
     const minimized = state.windows.find((w) => w.appId === appId && w.isMinimized)
-    if (minimized) {
-      get().restoreWindow(minimized.id)
-      return
-    }
+    if (minimized) { get().restoreWindow(minimized.id); return }
 
     const defaults = APP_DEFAULTS[appId]
     const id = `window-${++windowCounter}`
@@ -77,8 +74,7 @@ export const useDesktopStore = create<DesktopState>((set, get) => ({
       windows: [
         ...s.windows,
         {
-          id,
-          appId,
+          id, appId,
           title: defaults.title,
           x: 80 + offset,
           y: 40 + offset,
@@ -94,35 +90,42 @@ export const useDesktopStore = create<DesktopState>((set, get) => ({
     }))
   },
 
+  openBrowser: (url) => {
+    set({ pendingBrowserUrl: url })
+    // If browser window already open, just focus it (it will react to pendingBrowserUrl)
+    const state = get()
+    const existing = state.windows.find((w) => w.appId === 'browser' && !w.isMinimized)
+    if (existing) {
+      get().focusWindow(existing.id)
+      return
+    }
+    const minimized = state.windows.find((w) => w.appId === 'browser' && w.isMinimized)
+    if (minimized) {
+      get().restoreWindow(minimized.id)
+      return
+    }
+    get().openApp('browser')
+  },
+
   closeWindow: (windowId) => {
-    set((s) => ({
-      windows: s.windows.filter((w) => w.id !== windowId)
-    }))
+    set((s) => ({ windows: s.windows.filter((w) => w.id !== windowId) }))
   },
 
   focusWindow: (windowId) => {
     set((s) => ({
-      windows: s.windows.map((w) =>
-        w.id === windowId ? { ...w, zIndex: s.nextZIndex } : w
-      ),
+      windows: s.windows.map((w) => w.id === windowId ? { ...w, zIndex: s.nextZIndex } : w),
       nextZIndex: s.nextZIndex + 1,
       startMenuOpen: false
     }))
   },
 
   minimizeWindow: (windowId) => {
-    set((s) => ({
-      windows: s.windows.map((w) =>
-        w.id === windowId ? { ...w, isMinimized: true } : w
-      )
-    }))
+    set((s) => ({ windows: s.windows.map((w) => w.id === windowId ? { ...w, isMinimized: true } : w) }))
   },
 
   maximizeWindow: (windowId) => {
     set((s) => ({
-      windows: s.windows.map((w) =>
-        w.id === windowId ? { ...w, isMaximized: true, zIndex: s.nextZIndex } : w
-      ),
+      windows: s.windows.map((w) => w.id === windowId ? { ...w, isMaximized: true, zIndex: s.nextZIndex } : w),
       nextZIndex: s.nextZIndex + 1
     }))
   },
@@ -130,43 +133,23 @@ export const useDesktopStore = create<DesktopState>((set, get) => ({
   restoreWindow: (windowId) => {
     set((s) => ({
       windows: s.windows.map((w) =>
-        w.id === windowId
-          ? { ...w, isMinimized: false, isMaximized: false, zIndex: s.nextZIndex }
-          : w
+        w.id === windowId ? { ...w, isMinimized: false, isMaximized: false, zIndex: s.nextZIndex } : w
       ),
       nextZIndex: s.nextZIndex + 1
     }))
   },
 
   updateWindowPosition: (windowId, x, y) => {
-    set((s) => ({
-      windows: s.windows.map((w) =>
-        w.id === windowId ? { ...w, x, y } : w
-      )
-    }))
+    set((s) => ({ windows: s.windows.map((w) => w.id === windowId ? { ...w, x, y } : w) }))
   },
 
   updateWindowSize: (windowId, width, height) => {
-    set((s) => ({
-      windows: s.windows.map((w) =>
-        w.id === windowId ? { ...w, width, height } : w
-      )
-    }))
+    set((s) => ({ windows: s.windows.map((w) => w.id === windowId ? { ...w, width, height } : w) }))
   },
 
-  toggleStartMenu: () => {
-    set((s) => ({ startMenuOpen: !s.startMenuOpen }))
-  },
-
-  closeStartMenu: () => {
-    set({ startMenuOpen: false })
-  },
-
-  setBoot: (booted) => {
-    set({ booted })
-  },
-
-  setLoggedIn: (loggedIn) => {
-    set({ loggedIn })
-  }
+  toggleStartMenu: () => set((s) => ({ startMenuOpen: !s.startMenuOpen })),
+  closeStartMenu: () => set({ startMenuOpen: false }),
+  setBoot: (booted) => set({ booted }),
+  setLoggedIn: (loggedIn) => set({ loggedIn }),
+  clearPendingBrowserUrl: () => set({ pendingBrowserUrl: null })
 }))

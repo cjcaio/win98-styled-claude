@@ -1,8 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useChatStore } from '@/stores/chat'
+import { useDesktopStore } from '@/stores/desktop'
 import ReactMarkdown from 'react-markdown'
 import ChatIcon from '@/components/icons/ChatIcon'
 import ComputerIcon from '@/components/icons/ComputerIcon'
+import BrowserIcon from '@/components/icons/BrowserIcon'
+import SettingsIcon from '@/components/icons/SettingsIcon'
 import { playSound } from '@/lib/sounds'
 import styles from './ChatApp.module.css'
 
@@ -20,6 +23,83 @@ function UserIcon() {
   )
 }
 
+// ── No API Key screen ─────────────────────────────────────
+function NoApiKeyScreen() {
+  const { openBrowser, openApp, closeStartMenu } = useDesktopStore()
+
+  const goToConsole = () => {
+    openBrowser('https://console.anthropic.com')
+    closeStartMenu()
+  }
+
+  const goToClaudeAi = () => {
+    openBrowser('https://claude.ai')
+    closeStartMenu()
+  }
+
+  const openSettings = () => {
+    openApp('settings')
+  }
+
+  return (
+    <div className={styles.noKeyScreen}>
+      <div className={styles.noKeyIcon}>
+        <ComputerIcon size={48} />
+      </div>
+
+      <h2 className={styles.noKeyTitle}>No API Key Configured</h2>
+
+      <div className={styles.noKeyBody}>
+        <p>
+          Claude Chat requires an <strong>Anthropic API key</strong> to work.
+        </p>
+
+        <div className={styles.noKeyNote}>
+          <strong>⚠ Claude Pro ≠ API Access</strong>
+          <p>
+            Your Claude Pro subscription (claude.ai) and the Anthropic API are{' '}
+            <strong>separate products</strong>. A Pro subscription does not include
+            API credits — API access is billed separately at{' '}
+            <em>console.anthropic.com</em>.
+          </p>
+        </div>
+
+        <p className={styles.noKeyOptions}>You have two options:</p>
+
+        <div className={styles.noKeyButtons}>
+          <div className={styles.noKeyOption}>
+            <button className={`win98-button ${styles.noKeyBtn}`} onClick={goToConsole}>
+              <BrowserIcon size={16} />
+              <span>Get API Key</span>
+            </button>
+            <span className={styles.noKeyHint}>
+              console.anthropic.com → sign up for API access
+            </span>
+          </div>
+
+          <div className={styles.noKeyOption}>
+            <button className={`win98-button ${styles.noKeyBtn}`} onClick={goToClaudeAi}>
+              <BrowserIcon size={16} />
+              <span>Open Claude.ai</span>
+            </button>
+            <span className={styles.noKeyHint}>
+              Use your Pro subscription in the browser
+            </span>
+          </div>
+        </div>
+
+        <div className={styles.noKeyDivider} />
+
+        <button className={`win98-button ${styles.noKeySettingsBtn}`} onClick={openSettings}>
+          <SettingsIcon size={14} />
+          <span>I have a key → Open Control Panel</span>
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ── Main ChatApp ──────────────────────────────────────────
 export default function ChatApp() {
   const {
     chats, activeChatId, messages, streamingContent, isStreaming, isLoading,
@@ -27,9 +107,14 @@ export default function ChatApp() {
   } = useChatStore()
 
   const [input, setInput] = useState('')
+  const [apiReady, setApiReady] = useState<boolean | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const prevStreamingRef = useRef(false)
+
+  useEffect(() => {
+    window.api.isClaudeReady().then((ready) => setApiReady(ready))
+  }, [])
 
   useEffect(() => {
     loadChats()
@@ -39,9 +124,10 @@ export default function ChatApp() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, streamingContent])
 
-  // Play notify sound when Claude finishes responding
   useEffect(() => {
     if (prevStreamingRef.current && !isStreaming) {
+      // Re-check API ready status (user may have set key while chat was open)
+      window.api.isClaudeReady().then((ready) => setApiReady(ready))
       playSound('notify')
     }
     prevStreamingRef.current = isStreaming
@@ -61,6 +147,32 @@ export default function ChatApp() {
       handleSend()
     }
   }, [handleSend])
+
+  // Still loading API status
+  if (apiReady === null) {
+    return (
+      <div className={styles.chatApp}>
+        <div className={styles.main}>
+          <div className={styles.messages}>
+            <div className={styles.loading}>Checking connection...</div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // No API key — show helpful screen
+  if (apiReady === false) {
+    return (
+      <div className={styles.chatApp}>
+        <div className={styles.main}>
+          <div className={styles.messages}>
+            <NoApiKeyScreen />
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className={styles.chatApp}>
@@ -92,7 +204,6 @@ export default function ChatApp() {
 
       {/* Main chat area */}
       <div className={styles.main}>
-        {/* Messages */}
         <div className={styles.messages}>
           {isLoading ? (
             <div className={styles.loading}>Loading messages...</div>
@@ -125,7 +236,6 @@ export default function ChatApp() {
                 </div>
               ))}
 
-              {/* Streaming message */}
               {isStreaming && (
                 <div className={`${styles.message} ${styles.assistant}`}>
                   <div className={styles.messageHeader}>
@@ -150,7 +260,6 @@ export default function ChatApp() {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input bar */}
         <div className={styles.inputBar}>
           <textarea
             ref={inputRef}
