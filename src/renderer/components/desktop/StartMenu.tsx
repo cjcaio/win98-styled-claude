@@ -5,11 +5,12 @@ import RecycleBinIcon from '@/components/icons/RecycleBinIcon'
 import SettingsIcon from '@/components/icons/SettingsIcon'
 import BrowserIcon from '@/components/icons/BrowserIcon'
 import SpotifyIcon from '@/components/icons/SpotifyIcon'
+import MinesweeperIcon from '@/components/icons/MinesweeperIcon'
 import ShutdownIcon from '@/components/icons/ShutdownIcon'
 import styles from './StartMenu.module.css'
 
 export default function StartMenu() {
-  const { openApp, closeStartMenu } = useDesktopStore()
+  const { openApp, closeStartMenu, startShutdown } = useDesktopStore()
 
   const open = (appId: AppId) => {
     openApp(appId)
@@ -48,6 +49,11 @@ export default function StartMenu() {
           <span className={styles.itemLabel}>Recycle Bin</span>
         </button>
 
+        <button className={styles.item} onClick={() => open('minesweeper')}>
+          <span className={styles.itemIcon}><MinesweeperIcon size={20} /></span>
+          <span className={styles.itemLabel}>Minesweeper</span>
+        </button>
+
         <div className="win98-divider-h" style={{ margin: '2px 4px' }} />
 
         <button className={styles.item} onClick={() => open('settings')}>
@@ -57,7 +63,7 @@ export default function StartMenu() {
 
         <div className="win98-divider-h" style={{ margin: '2px 4px' }} />
 
-        <button className={styles.item} onClick={() => window.api.closeWindow()}>
+        <button className={styles.item} onClick={startShutdown}>
           <span className={styles.itemIcon}><ShutdownIcon size={20} /></span>
           <span className={styles.itemLabel}>Shut Down...</span>
         </button>

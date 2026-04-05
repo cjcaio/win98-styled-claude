@@ -1,4 +1,5 @@
 import { ipcMain, BrowserWindow, safeStorage, app } from 'electron'
+import * as os from 'os'
 import { join } from 'path'
 import { existsSync, readFileSync } from 'fs'
 import { initClaude, resetClaude, isClaudeReady, sendMessage as claudeSend } from '../services/claude'
@@ -196,6 +197,16 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle('window:is-maximized', (event) => {
     return BrowserWindow.fromWebContents(event.sender)?.isMaximized() ?? false
+  })
+
+  // ─── System Info ────────────────────────────────────────
+  ipcMain.handle('system:get-info', () => {
+    const cpus = os.cpus()
+    const cpu = cpus[0]?.model?.trim() ?? 'Unknown CPU'
+    const cores = cpus.length
+    const ramMb = Math.round(os.totalmem() / 1024 / 1024)
+    const hostname = os.hostname()
+    return { cpu, cores, ramMb, hostname }
   })
 
   // ─── Assets (pfp / wallpaper) ───────────────────────────

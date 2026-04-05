@@ -1,4 +1,4 @@
-type SoundName = 'startup' | 'windowOpen' | 'windowClose' | 'click' | 'error' | 'notify' | 'login'
+type SoundName = 'startup' | 'windowOpen' | 'windowClose' | 'click' | 'error' | 'notify' | 'login' | 'shutdown'
 
 let audioCtx: AudioContext | null = null
 
@@ -81,6 +81,18 @@ export function playSound(name: SoundName): void {
         // Soft double-bell ding
         tone(ctx, 880,  t + 0.00, 0.12, 'sine', 0.18)
         tone(ctx, 1108, t + 0.10, 0.22, 'sine', 0.14)
+        break
+
+      case 'shutdown':
+        // Win98/XP descending goodbye — warm, slow, melancholic
+        tone(ctx, 784, t + 0.00, 0.35, 'sine', 0.22)  // G5
+        tone(ctx, 659, t + 0.00, 0.35, 'sine', 0.10)  // E5 harmony
+        tone(ctx, 659, t + 0.30, 0.35, 'sine', 0.20)  // E5
+        tone(ctx, 523, t + 0.30, 0.35, 'sine', 0.10)  // C5 harmony
+        tone(ctx, 523, t + 0.58, 0.40, 'sine', 0.20)  // C5
+        tone(ctx, 392, t + 0.58, 0.40, 'sine', 0.10)  // G4 harmony
+        tone(ctx, 392, t + 0.90, 0.70, 'sine', 0.22)  // G4
+        tone(ctx, 262, t + 0.90, 0.70, 'sine', 0.14)  // C4 harmony
         break
 
       case 'login':

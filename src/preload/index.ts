@@ -53,6 +53,10 @@ const api = {
   closeWindow: () => ipcRenderer.invoke('window:close'),
   isMaximized: () => ipcRenderer.invoke('window:is-maximized'),
 
+  // System
+  getSystemInfo: (): Promise<{ cpu: string; cores: number; ramMb: number; hostname: string }> =>
+    ipcRenderer.invoke('system:get-info'),
+
   // Assets
   getPfp: (): Promise<string | null> => ipcRenderer.invoke('assets:get-pfp'),
   getWallpaper: (): Promise<string | null> => ipcRenderer.invoke('assets:get-wallpaper'),

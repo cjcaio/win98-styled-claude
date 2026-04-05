@@ -9,12 +9,14 @@ import RecycleBin from '@/components/apps/recycle-bin/RecycleBin'
 import SettingsApp from '@/components/apps/settings/SettingsApp'
 import BrowserApp from '@/components/apps/browser/BrowserApp'
 import SpotifyApp from '@/components/apps/spotify/SpotifyApp'
+import Minesweeper from '@/components/apps/minesweeper/Minesweeper'
 import ChatIcon from '@/components/icons/ChatIcon'
 import FolderIcon from '@/components/icons/FolderIcon'
 import RecycleBinIcon from '@/components/icons/RecycleBinIcon'
 import SettingsIcon from '@/components/icons/SettingsIcon'
 import BrowserIcon from '@/components/icons/BrowserIcon'
 import SpotifyIcon from '@/components/icons/SpotifyIcon'
+import MinesweeperIcon from '@/components/icons/MinesweeperIcon'
 import styles from './Desktop.module.css'
 
 const ICONS: Array<{ id: AppId; label: string; icon: ReactNode; row: number }> = [
@@ -24,6 +26,7 @@ const ICONS: Array<{ id: AppId; label: string; icon: ReactNode; row: number }> =
   { id: 'settings',    label: 'Control Panel',    icon: <SettingsIcon size={32} />,   row: 3 },
   { id: 'browser',     label: 'Internet Explorer',icon: <BrowserIcon size={32} />,    row: 4 },
   { id: 'spotify',     label: 'Spotify',          icon: <SpotifyIcon size={32} />,    row: 5 },
+  { id: 'minesweeper', label: 'Minesweeper',      icon: <MinesweeperIcon size={32} />, row: 6 },
 ]
 
 const APP_COMPONENTS: Record<AppId, ComponentType> = {
@@ -33,6 +36,7 @@ const APP_COMPONENTS: Record<AppId, ComponentType> = {
   settings:      SettingsApp,
   browser:       BrowserApp,
   spotify:       SpotifyApp,
+  minesweeper:   Minesweeper,
 }
 
 const APP_ICONS: Record<AppId, ReactNode> = {
@@ -42,6 +46,7 @@ const APP_ICONS: Record<AppId, ReactNode> = {
   settings:      <SettingsIcon size={16} />,
   browser:       <BrowserIcon size={16} />,
   spotify:       <SpotifyIcon size={16} />,
+  minesweeper:   <MinesweeperIcon size={16} />,
 }
 
 export default function Desktop() {

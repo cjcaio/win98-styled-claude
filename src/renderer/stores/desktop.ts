@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export type AppId = 'chat' | 'explorer' | 'recycle-bin' | 'settings' | 'browser' | 'spotify'
+export type AppId = 'chat' | 'explorer' | 'recycle-bin' | 'settings' | 'browser' | 'spotify' | 'minesweeper'
 
 export interface WindowState {
   id: string
@@ -21,6 +21,7 @@ interface DesktopState {
   startMenuOpen: boolean
   booted: boolean
   loggedIn: boolean
+  isShuttingDown: boolean
   pendingBrowserUrl: string | null
 
   // Actions
@@ -38,6 +39,7 @@ interface DesktopState {
   closeStartMenu: () => void
   setBoot: (booted: boolean) => void
   setLoggedIn: (loggedIn: boolean) => void
+  startShutdown: () => void
   clearPendingBrowserUrl: () => void
 }
 
@@ -47,7 +49,8 @@ const APP_DEFAULTS: Record<AppId, { title: string; width: number; height: number
   'recycle-bin': { title: 'Recycle Bin',     width: 500,  height: 400 },
   settings:      { title: 'Control Panel',   width: 450,  height: 380 },
   browser:       { title: 'Internet Explorer', width: 960, height: 680 },
-  spotify:       { title: 'Spotify',           width: 400, height: 520 }
+  spotify:       { title: 'Spotify',           width: 400, height: 520 },
+  minesweeper:   { title: 'Minesweeper',       width: 260, height: 320 }
 }
 
 let windowCounter = 0
@@ -58,6 +61,7 @@ export const useDesktopStore = create<DesktopState>((set, get) => ({
   startMenuOpen: false,
   booted: false,
   loggedIn: false,
+  isShuttingDown: false,
   pendingBrowserUrl: null,
 
   openApp: (appId) => {
@@ -181,5 +185,6 @@ export const useDesktopStore = create<DesktopState>((set, get) => ({
   closeStartMenu: () => set({ startMenuOpen: false }),
   setBoot: (booted) => set({ booted }),
   setLoggedIn: (loggedIn) => set({ loggedIn }),
+  startShutdown: () => set({ isShuttingDown: true, startMenuOpen: false }),
   clearPendingBrowserUrl: () => set({ pendingBrowserUrl: null })
 }))
