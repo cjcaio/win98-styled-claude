@@ -1,0 +1,132 @@
+/* ═══════════════════════════════════════════════
+   Claude98 — Global Styles & Design Tokens
+   ═══════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+:root {
+  /* ── Surface Colors ── */
+  --c98-surface: #c0c0c0;
+  --c98-surface-dark: #808080;
+  --c98-surface-darker: #404040;
+  --c98-surface-light: #dfdfdf;
+  --c98-white: #ffffff;
+  --c98-black: #000000;
+
+  /* ── Desktop ── */
+  --c98-desktop: #008080;
+
+  /* ── Title Bar ── */
+  --c98-title-active: linear-gradient(90deg, #00007b, #0883c9);
+  --c98-title-inactive: linear-gradient(90deg, #7f7f7f, #b3b3b3);
+  --c98-title-text: #ffffff;
+
+  /* ── Accent ── */
+  --c98-highlight: #000080;
+  --c98-highlight-text: #ffffff;
+  --c98-link: #0000ff;
+
+  /* ── Borders (the 3D magic) ── */
+  --c98-border-light: #ffffff;
+  --c98-border-dark: #808080;
+  --c98-border-darkest: #000000;
+
+  /* ── Input ── */
+  --c98-input-bg: #ffffff;
+  --c98-input-border: inset 1px 1px 0 #808080, inset -1px -1px 0 #dfdfdf, inset 2px 2px 0 #000000;
+
+  /* ── Chat ── */
+  --c98-chat-user: #ffffcc;
+  --c98-chat-assistant: #ffffff;
+
+  /* ── Typography ── */
+  --c98-font: 'Tahoma', 'MS Sans Serif', 'Geneva', sans-serif;
+  --c98-font-display: 'VT323', monospace;
+  --c98-font-mono: 'Courier New', 'Fixedsys', monospace;
+  --c98-font-size: 11px;
+  --c98-font-size-title: 11px;
+  --c98-font-size-boot: 16px;
+
+  /* ── Spacing ── */
+  --c98-gap: 2px;
+  --c98-padding: 3px;
+  --c98-padding-lg: 8px;
+  --c98-radius: 0px; /* Win98 has no border radius */
+
+  /* ── Shadows ── */
+  --c98-shadow-window: 2px 2px 8px rgba(0, 0, 0, 0.35);
+
+  /* ── Z-index layers ── */
+  --z-desktop: 0;
+  --z-window: 100;
+  --z-taskbar: 900;
+  --z-start-menu: 950;
+  --z-dialog: 1000;
+  --z-boot: 9999;
+}
+
+/* ── Reset ── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--c98-font);
+  font-size: var(--c98-font-size);
+  color: var(--c98-black);
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: unset;
+  user-select: none;
+}
+
+body {
+  background: var(--c98-desktop);
+}
+
+/* ── Scrollbar (Win98 style) ── */
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background: repeating-conic-gradient(var(--c98-surface-light) 0% 25%, var(--c98-white) 0% 50%) 50% / 2px 2px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--c98-surface);
+  border-top: 1px solid var(--c98-border-light);
+  border-left: 1px solid var(--c98-border-light);
+  border-right: 1px solid var(--c98-border-darkest);
+  border-bottom: 1px solid var(--c98-border-darkest);
+}
+
+::-webkit-scrollbar-button {
+  display: block;
+  width: 16px;
+  height: 16px;
+  background: var(--c98-surface);
+  border-top: 1px solid var(--c98-border-light);
+  border-left: 1px solid var(--c98-border-light);
+  border-right: 1px solid var(--c98-border-darkest);
+  border-bottom: 1px solid var(--c98-border-darkest);
+}
+
+/* ── Selection ── */
+::selection {
+  background: var(--c98-highlight);
+  color: var(--c98-highlight-text);
+}
+
+/* ── Focus ── */
+:focus-visible {
+  outline: 1px dotted var(--c98-black);
+  outline-offset: -1px;
+}

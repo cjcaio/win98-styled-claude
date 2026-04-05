@@ -1,0 +1,128 @@
+.settings {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--c98-border-dark);
+}
+
+.headerIcon {
+  font-size: 24px;
+}
+
+.headerTitle {
+  font-family: var(--c98-font);
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* ── Fieldset (Win98 groupbox) ── */
+.fieldset {
+  border: 1px solid var(--c98-border-dark);
+  padding: 12px 10px 10px;
+  margin: 0;
+  font-size: 11px;
+}
+
+.fieldset legend {
+  padding: 0 4px;
+  font-size: 11px;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.label {
+  width: 80px;
+  text-align: right;
+  flex-shrink: 0;
+  font-size: 11px;
+}
+
+.input {
+  flex: 1;
+  max-width: 280px;
+}
+
+.select {
+  width: 200px;
+  height: 21px;
+  font-family: var(--c98-font);
+  font-size: 11px;
+  background: var(--c98-white);
+  cursor: pointer;
+}
+
+.mono {
+  font-family: var(--c98-font-mono);
+  font-size: 11px;
+  color: var(--c98-border-dark);
+}
+
+.status {
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.statusOk {
+  color: #006400;
+}
+
+.statusErr {
+  color: #8b0000;
+}
+
+.hint {
+  font-size: 10px;
+  color: var(--c98-border-dark);
+  padding-top: 4px;
+  line-height: 1.4;
+}
+
+.link {
+  color: var(--c98-link);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ── About ── */
+.about {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.aboutLogo {
+  font-size: 36px;
+  color: var(--c98-highlight);
+}
+
+.aboutCopy {
+  font-size: 10px;
+  color: var(--c98-border-dark);
+}
+
+/* ── Actions ── */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  padding-top: 4px;
+}

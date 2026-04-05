@@ -1,0 +1,51 @@
+.icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  cursor: pointer;
+  background: none;
+  border: 1px solid transparent;
+  width: 75px;
+  text-align: center;
+  font-family: var(--c98-font);
+  font-size: var(--c98-font-size);
+}
+
+.icon:focus {
+  outline: none;
+}
+
+.selected {
+  border: 1px dotted var(--c98-white);
+}
+
+.iconImage {
+  font-size: 32px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.selected .iconImage {
+  filter: brightness(0.7) saturate(2);
+}
+
+.label {
+  color: var(--c98-white);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  word-break: break-word;
+  line-height: 1.2;
+  max-width: 70px;
+  font-size: 11px;
+}
+
+.labelSelected {
+  background: var(--c98-highlight);
+  color: var(--c98-highlight-text);
+  text-shadow: none;
+}

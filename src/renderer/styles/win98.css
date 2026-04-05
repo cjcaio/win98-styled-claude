@@ -1,0 +1,233 @@
+/* ═══════════════════════════════════════════════
+   Claude98 — Win98 Component System
+   ═══════════════════════════════════════════════ */
+
+/* ── Raised surface (buttons, panels, taskbar) ── */
+.win98-raised {
+  background: var(--c98-surface);
+  border-top: 2px solid var(--c98-border-light);
+  border-left: 2px solid var(--c98-border-light);
+  border-right: 2px solid var(--c98-border-darkest);
+  border-bottom: 2px solid var(--c98-border-darkest);
+}
+
+/* ── Inner raised (double-border effect) ── */
+.win98-raised-inner {
+  border-top: 1px solid var(--c98-surface-light);
+  border-left: 1px solid var(--c98-surface-light);
+  border-right: 1px solid var(--c98-border-dark);
+  border-bottom: 1px solid var(--c98-border-dark);
+}
+
+/* ── Sunken surface (inputs, status bars) ── */
+.win98-sunken {
+  border-top: 2px solid var(--c98-border-dark);
+  border-left: 2px solid var(--c98-border-dark);
+  border-right: 2px solid var(--c98-border-light);
+  border-bottom: 2px solid var(--c98-border-light);
+}
+
+/* ── Deep sunken (text areas, list views) ── */
+.win98-sunken-deep {
+  border-top: 1px solid var(--c98-border-darkest);
+  border-left: 1px solid var(--c98-border-darkest);
+  border-right: 1px solid var(--c98-border-light);
+  border-bottom: 1px solid var(--c98-border-light);
+  box-shadow: inset 1px 1px 0 var(--c98-border-dark);
+}
+
+/* ── Button ── */
+.win98-button {
+  font-family: var(--c98-font);
+  font-size: var(--c98-font-size);
+  background: var(--c98-surface);
+  color: var(--c98-black);
+  border-top: 2px solid var(--c98-border-light);
+  border-left: 2px solid var(--c98-border-light);
+  border-right: 2px solid var(--c98-border-darkest);
+  border-bottom: 2px solid var(--c98-border-darkest);
+  padding: 2px 12px;
+  min-width: 75px;
+  height: 23px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.win98-button:active {
+  border-top: 2px solid var(--c98-border-darkest);
+  border-left: 2px solid var(--c98-border-darkest);
+  border-right: 2px solid var(--c98-border-light);
+  border-bottom: 2px solid var(--c98-border-light);
+  padding: 3px 11px 1px 13px;
+}
+
+.win98-button:disabled {
+  color: var(--c98-border-dark);
+  text-shadow: 1px 1px 0 var(--c98-border-light);
+  cursor: default;
+}
+
+.win98-button:disabled:active {
+  border-top: 2px solid var(--c98-border-light);
+  border-left: 2px solid var(--c98-border-light);
+  border-right: 2px solid var(--c98-border-darkest);
+  border-bottom: 2px solid var(--c98-border-darkest);
+  padding: 2px 12px;
+}
+
+/* ── Button (focused — dotted inner border) ── */
+.win98-button:focus-visible {
+  outline: none;
+}
+
+.win98-button:focus-visible::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px dotted var(--c98-black);
+  pointer-events: none;
+}
+
+/* ── Input ── */
+.win98-input {
+  font-family: var(--c98-font);
+  font-size: var(--c98-font-size);
+  background: var(--c98-input-bg);
+  color: var(--c98-black);
+  border-top: 1px solid var(--c98-border-darkest);
+  border-left: 1px solid var(--c98-border-darkest);
+  border-right: 1px solid var(--c98-border-light);
+  border-bottom: 1px solid var(--c98-border-light);
+  box-shadow: inset 1px 1px 0 var(--c98-border-dark);
+  padding: 2px 4px;
+  height: 21px;
+  outline: none;
+}
+
+.win98-input::placeholder {
+  color: var(--c98-border-dark);
+}
+
+/* ── Textarea ── */
+.win98-textarea {
+  font-family: var(--c98-font);
+  font-size: var(--c98-font-size);
+  background: var(--c98-input-bg);
+  color: var(--c98-black);
+  border-top: 1px solid var(--c98-border-darkest);
+  border-left: 1px solid var(--c98-border-darkest);
+  border-right: 1px solid var(--c98-border-light);
+  border-bottom: 1px solid var(--c98-border-light);
+  box-shadow: inset 1px 1px 0 var(--c98-border-dark);
+  padding: 4px;
+  outline: none;
+  resize: none;
+}
+
+/* ── Menu bar ── */
+.win98-menubar {
+  display: flex;
+  align-items: center;
+  height: 20px;
+  background: var(--c98-surface);
+  padding: 0 2px;
+  font-size: var(--c98-font-size);
+}
+
+.win98-menubar-item {
+  padding: 2px 6px;
+  cursor: pointer;
+}
+
+.win98-menubar-item:hover {
+  background: var(--c98-highlight);
+  color: var(--c98-highlight-text);
+}
+
+/* ── Status bar ── */
+.win98-statusbar {
+  display: flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 4px;
+  background: var(--c98-surface);
+  border-top: 1px solid var(--c98-border-dark);
+  font-size: var(--c98-font-size);
+}
+
+.win98-statusbar-section {
+  padding: 0 4px;
+  border-top: 1px solid var(--c98-border-dark);
+  border-left: 1px solid var(--c98-border-dark);
+  border-right: 1px solid var(--c98-border-light);
+  border-bottom: 1px solid var(--c98-border-light);
+  height: 16px;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Divider ── */
+.win98-divider-h {
+  height: 2px;
+  border-top: 1px solid var(--c98-border-dark);
+  border-bottom: 1px solid var(--c98-border-light);
+  margin: 2px 0;
+}
+
+.win98-divider-v {
+  width: 2px;
+  border-left: 1px solid var(--c98-border-dark);
+  border-right: 1px solid var(--c98-border-light);
+  margin: 0 2px;
+  align-self: stretch;
+}
+
+/* ── Tooltip ── */
+.win98-tooltip {
+  position: absolute;
+  background: #ffffe1;
+  border: 1px solid var(--c98-black);
+  padding: 2px 4px;
+  font-size: var(--c98-font-size);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10000;
+}
+
+/* ── Context menu ── */
+.win98-context-menu {
+  position: absolute;
+  background: var(--c98-surface);
+  border-top: 2px solid var(--c98-border-light);
+  border-left: 2px solid var(--c98-border-light);
+  border-right: 2px solid var(--c98-border-darkest);
+  border-bottom: 2px solid var(--c98-border-darkest);
+  padding: 2px;
+  min-width: 160px;
+  z-index: 10000;
+}
+
+.win98-context-menu-item {
+  padding: 4px 24px 4px 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.win98-context-menu-item:hover {
+  background: var(--c98-highlight);
+  color: var(--c98-highlight-text);
+}
+
+.win98-context-menu-separator {
+  height: 1px;
+  background: var(--c98-border-dark);
+  margin: 2px 2px;
+  border-bottom: 1px solid var(--c98-border-light);
+}
