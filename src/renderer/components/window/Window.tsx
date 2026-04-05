@@ -65,7 +65,6 @@ export default function Window({ windowState, icon, children, menuBar, statusBar
         updateWindowSize(windowState.id, parseInt(ref.style.width), parseInt(ref.style.height))
         updateWindowPosition(windowState.id, pos.x, pos.y)
       }}
-      className="window-enter"
     >
       <div className={styles.window}>
         {/* Title bar */}

@@ -6,6 +6,7 @@ const api = {
   // Settings
   getApiKey: (): Promise<string | null> => ipcRenderer.invoke('settings:get-api-key'),
   setApiKey: (key: string): Promise<boolean> => ipcRenderer.invoke('settings:set-api-key', key),
+  clearApiKey: (): Promise<boolean> => ipcRenderer.invoke('settings:clear-api-key'),
   getSetting: (key: string): Promise<string | null> => ipcRenderer.invoke('settings:get', key),
   setSetting: (key: string, value: string): Promise<boolean> => ipcRenderer.invoke('settings:set', key, value),
 
@@ -51,7 +52,20 @@ const api = {
 
   // Assets
   getPfp: (): Promise<string | null> => ipcRenderer.invoke('assets:get-pfp'),
-  getWallpaper: (): Promise<string | null> => ipcRenderer.invoke('assets:get-wallpaper')
+  getWallpaper: (): Promise<string | null> => ipcRenderer.invoke('assets:get-wallpaper'),
+
+  // Spotify
+  spotifyGetSetup: (): Promise<{ clientId: string | null; isAuthenticated: boolean }> =>
+    ipcRenderer.invoke('spotify:get-setup'),
+  spotifySaveClientId: (id: string): Promise<boolean> => ipcRenderer.invoke('spotify:save-client-id', id),
+  spotifyStartAuth: (): Promise<boolean> => ipcRenderer.invoke('spotify:start-auth'),
+  spotifyGetPlayerState: (): Promise<any> => ipcRenderer.invoke('spotify:get-player-state'),
+  spotifyPlay: (): Promise<void> => ipcRenderer.invoke('spotify:play'),
+  spotifyPause: (): Promise<void> => ipcRenderer.invoke('spotify:pause'),
+  spotifyNext: (): Promise<void> => ipcRenderer.invoke('spotify:next'),
+  spotifyPrevious: (): Promise<void> => ipcRenderer.invoke('spotify:previous'),
+  spotifySetVolume: (vol: number): Promise<void> => ipcRenderer.invoke('spotify:set-volume', vol),
+  spotifyLogout: (): Promise<boolean> => ipcRenderer.invoke('spotify:logout')
 }
 
 contextBridge.exposeInMainWorld('api', api)

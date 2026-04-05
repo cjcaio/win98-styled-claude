@@ -4,6 +4,7 @@ import FolderIcon from '@/components/icons/FolderIcon'
 import RecycleBinIcon from '@/components/icons/RecycleBinIcon'
 import SettingsIcon from '@/components/icons/SettingsIcon'
 import BrowserIcon from '@/components/icons/BrowserIcon'
+import SpotifyIcon from '@/components/icons/SpotifyIcon'
 import ShutdownIcon from '@/components/icons/ShutdownIcon'
 import styles from './StartMenu.module.css'
 
@@ -25,6 +26,11 @@ export default function StartMenu() {
         <button className={styles.item} onClick={() => open('browser')}>
           <span className={styles.itemIcon}><BrowserIcon size={20} /></span>
           <span className={styles.itemLabel}>Internet Explorer</span>
+        </button>
+
+        <button className={styles.item} onClick={() => open('spotify')}>
+          <span className={styles.itemIcon}><SpotifyIcon size={20} /></span>
+          <span className={styles.itemLabel}>Spotify</span>
         </button>
 
         <button className={styles.item} onClick={() => open('chat')}>

@@ -4,7 +4,6 @@ import { useDesktopStore } from '@/stores/desktop'
 import ReactMarkdown from 'react-markdown'
 import ChatIcon from '@/components/icons/ChatIcon'
 import ComputerIcon from '@/components/icons/ComputerIcon'
-import BrowserIcon from '@/components/icons/BrowserIcon'
 import SettingsIcon from '@/components/icons/SettingsIcon'
 import { playSound } from '@/lib/sounds'
 import styles from './ChatApp.module.css'
@@ -25,21 +24,7 @@ function UserIcon() {
 
 // ── No API Key screen ─────────────────────────────────────
 function NoApiKeyScreen() {
-  const { openBrowser, openApp, closeStartMenu } = useDesktopStore()
-
-  const goToConsole = () => {
-    openBrowser('https://console.anthropic.com')
-    closeStartMenu()
-  }
-
-  const goToClaudeAi = () => {
-    openBrowser('https://claude.ai')
-    closeStartMenu()
-  }
-
-  const openSettings = () => {
-    openApp('settings')
-  }
+  const { openApp } = useDesktopStore()
 
   return (
     <div className={styles.noKeyScreen}>
@@ -52,47 +37,20 @@ function NoApiKeyScreen() {
       <div className={styles.noKeyBody}>
         <p>
           Claude Chat requires an <strong>Anthropic API key</strong> to work.
+          Get one at <em>console.anthropic.com</em>, then add it in the Control Panel.
         </p>
 
         <div className={styles.noKeyNote}>
           <strong>⚠ Claude Pro ≠ API Access</strong>
           <p>
-            Your Claude Pro subscription (claude.ai) and the Anthropic API are{' '}
-            <strong>separate products</strong>. A Pro subscription does not include
-            API credits — API access is billed separately at{' '}
-            <em>console.anthropic.com</em>.
+            A Claude Pro subscription does not include API credits —
+            API access is billed separately at <em>console.anthropic.com</em>.
           </p>
         </div>
 
-        <p className={styles.noKeyOptions}>You have two options:</p>
-
-        <div className={styles.noKeyButtons}>
-          <div className={styles.noKeyOption}>
-            <button className={`win98-button ${styles.noKeyBtn}`} onClick={goToConsole}>
-              <BrowserIcon size={16} />
-              <span>Get API Key</span>
-            </button>
-            <span className={styles.noKeyHint}>
-              console.anthropic.com → sign up for API access
-            </span>
-          </div>
-
-          <div className={styles.noKeyOption}>
-            <button className={`win98-button ${styles.noKeyBtn}`} onClick={goToClaudeAi}>
-              <BrowserIcon size={16} />
-              <span>Open Claude.ai</span>
-            </button>
-            <span className={styles.noKeyHint}>
-              Use your Pro subscription in the browser
-            </span>
-          </div>
-        </div>
-
-        <div className={styles.noKeyDivider} />
-
-        <button className={`win98-button ${styles.noKeySettingsBtn}`} onClick={openSettings}>
+        <button className={`win98-button ${styles.noKeySettingsBtn}`} onClick={() => openApp('settings')}>
           <SettingsIcon size={14} />
-          <span>I have a key → Open Control Panel</span>
+          <span>Open Control Panel to add key</span>
         </button>
       </div>
     </div>

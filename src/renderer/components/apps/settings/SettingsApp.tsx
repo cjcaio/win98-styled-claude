@@ -37,6 +37,14 @@ export default function SettingsApp() {
     }
   }, [apiKey, model])
 
+  const handleClear = useCallback(async () => {
+    await window.api.clearApiKey()
+    setSavedKey(null)
+    setApiKey('')
+    setIsReady(false)
+    setStatus('idle')
+  }, [])
+
   const maskedKey = savedKey
     ? `sk-ant-...${savedKey.slice(-8)}`
     : 'Not set'
@@ -120,6 +128,11 @@ export default function SettingsApp() {
           <button className="win98-button" onClick={handleSave} disabled={!apiKey.trim()}>
             {status === 'saving' ? 'Saving...' : status === 'saved' ? '✓ Saved!' : 'Apply'}
           </button>
+          {savedKey && (
+            <button className="win98-button" onClick={handleClear}>
+              Clear Key
+            </button>
+          )}
         </div>
       </div>
     </div>

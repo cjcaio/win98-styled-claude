@@ -4,7 +4,11 @@ import { BrowserWindow } from 'electron'
 let client: Anthropic | null = null
 
 export function initClaude(apiKey: string): void {
-  client = new Anthropic({ apiKey })
+  client = apiKey ? new Anthropic({ apiKey }) : null
+}
+
+export function resetClaude(): void {
+  client = null
 }
 
 export function isClaudeReady(): boolean {

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export type AppId = 'chat' | 'explorer' | 'recycle-bin' | 'settings' | 'browser'
+export type AppId = 'chat' | 'explorer' | 'recycle-bin' | 'settings' | 'browser' | 'spotify'
 
 export interface WindowState {
   id: string
@@ -26,6 +26,7 @@ interface DesktopState {
   // Actions
   openApp: (appId: AppId) => void
   openBrowser: (url: string) => void
+  openBrowserBackground: (url: string) => void
   closeWindow: (windowId: string) => void
   focusWindow: (windowId: string) => void
   minimizeWindow: (windowId: string) => void
@@ -45,7 +46,8 @@ const APP_DEFAULTS: Record<AppId, { title: string; width: number; height: number
   explorer:      { title: 'My Documents',    width: 600,  height: 450 },
   'recycle-bin': { title: 'Recycle Bin',     width: 500,  height: 400 },
   settings:      { title: 'Control Panel',   width: 450,  height: 380 },
-  browser:       { title: 'Internet Explorer', width: 960, height: 680 }
+  browser:       { title: 'Internet Explorer', width: 960, height: 680 },
+  spotify:       { title: 'Spotify',           width: 400, height: 520 }
 }
 
 let windowCounter = 0
@@ -105,6 +107,34 @@ export const useDesktopStore = create<DesktopState>((set, get) => ({
       return
     }
     get().openApp('browser')
+  },
+
+  openBrowserBackground: (url) => {
+    // Don't open a second browser window if one already exists
+    const state = get()
+    if (state.windows.find((w) => w.appId === 'browser')) return
+
+    const defaults = APP_DEFAULTS['browser']
+    const id = `window-${++windowCounter}`
+    set((s) => ({
+      windows: [
+        ...s.windows,
+        {
+          id,
+          appId: 'browser',
+          title: defaults.title,
+          x: 80,
+          y: 40,
+          width: defaults.width,
+          height: defaults.height,
+          isMinimized: true,   // born minimized — lives in taskbar
+          isMaximized: false,
+          zIndex: s.nextZIndex
+        }
+      ],
+      nextZIndex: s.nextZIndex + 1,
+      pendingBrowserUrl: url
+    }))
   },
 
   closeWindow: (windowId) => {

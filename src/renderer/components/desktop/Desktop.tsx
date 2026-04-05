@@ -8,11 +8,13 @@ import Explorer from '@/components/apps/explorer/Explorer'
 import RecycleBin from '@/components/apps/recycle-bin/RecycleBin'
 import SettingsApp from '@/components/apps/settings/SettingsApp'
 import BrowserApp from '@/components/apps/browser/BrowserApp'
+import SpotifyApp from '@/components/apps/spotify/SpotifyApp'
 import ChatIcon from '@/components/icons/ChatIcon'
 import FolderIcon from '@/components/icons/FolderIcon'
 import RecycleBinIcon from '@/components/icons/RecycleBinIcon'
 import SettingsIcon from '@/components/icons/SettingsIcon'
 import BrowserIcon from '@/components/icons/BrowserIcon'
+import SpotifyIcon from '@/components/icons/SpotifyIcon'
 import styles from './Desktop.module.css'
 
 const ICONS: Array<{ id: AppId; label: string; icon: ReactNode; row: number }> = [
@@ -21,6 +23,7 @@ const ICONS: Array<{ id: AppId; label: string; icon: ReactNode; row: number }> =
   { id: 'recycle-bin', label: 'Recycle Bin',      icon: <RecycleBinIcon size={32} />, row: 2 },
   { id: 'settings',    label: 'Control Panel',    icon: <SettingsIcon size={32} />,   row: 3 },
   { id: 'browser',     label: 'Internet Explorer',icon: <BrowserIcon size={32} />,    row: 4 },
+  { id: 'spotify',     label: 'Spotify',          icon: <SpotifyIcon size={32} />,    row: 5 },
 ]
 
 const APP_COMPONENTS: Record<AppId, ComponentType> = {
@@ -29,6 +32,7 @@ const APP_COMPONENTS: Record<AppId, ComponentType> = {
   'recycle-bin': RecycleBin,
   settings:      SettingsApp,
   browser:       BrowserApp,
+  spotify:       SpotifyApp,
 }
 
 const APP_ICONS: Record<AppId, ReactNode> = {
@@ -37,6 +41,7 @@ const APP_ICONS: Record<AppId, ReactNode> = {
   'recycle-bin': <RecycleBinIcon size={16} />,
   settings:      <SettingsIcon size={16} />,
   browser:       <BrowserIcon size={16} />,
+  spotify:       <SpotifyIcon size={16} />,
 }
 
 export default function Desktop() {

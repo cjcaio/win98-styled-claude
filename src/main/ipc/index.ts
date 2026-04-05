@@ -1,7 +1,8 @@
 import { ipcMain, BrowserWindow, safeStorage, app } from 'electron'
 import { join } from 'path'
 import { existsSync, readFileSync } from 'fs'
-import { initClaude, isClaudeReady, sendMessage } from '../services/claude'
+import { initClaude, resetClaude, isClaudeReady, sendMessage } from '../services/claude'
+import * as spotifyService from '../services/spotify'
 import * as chatsRepo from '../database/repositories/chats'
 import * as filesRepo from '../database/repositories/files'
 import { queryOne, execute, saveDb } from '../database/connection'
@@ -51,6 +52,13 @@ export function registerIpcHandlers(): void {
     execute('INSERT INTO settings (key, value) VALUES (?, ?)', ['api_key_encrypted', encrypted])
     saveDb()
     initClaude(apiKey)
+    return true
+  })
+
+  ipcMain.handle('settings:clear-api-key', () => {
+    execute('DELETE FROM settings WHERE key = ?', ['api_key_encrypted'])
+    saveDb()
+    resetClaude()
     return true
   })
 
@@ -171,6 +179,99 @@ export function registerIpcHandlers(): void {
   ipcMain.handle('assets:get-wallpaper', () => {
     const path = findAsset('wallpaper', ['.jpg', '.jpeg', '.png', '.webp', '.bmp'])
     return path ? fileToDataUrl(path) : null
+  })
+
+  // ─── Spotify ────────────────────────────────────────────
+  function spotifyGet(key: string): string | null {
+    return queryOne<{ value: string }>('SELECT value FROM settings WHERE key = ?', [key])?.value ?? null
+  }
+  function spotifySet(key: string, value: string) {
+    execute('DELETE FROM settings WHERE key = ?', [key])
+    execute('INSERT INTO settings (key, value) VALUES (?, ?)', [key, value])
+  }
+
+  async function getValidSpotifyToken(): Promise<string | null> {
+    const clientId = spotifyGet('spotify_client_id')
+    const accessToken = spotifyGet('spotify_access_token')
+    const refreshToken = spotifyGet('spotify_refresh_token')
+    const expiresAt = parseInt(spotifyGet('spotify_expires_at') ?? '0')
+    if (!clientId || !accessToken) return null
+    if (Date.now() < expiresAt - 60_000) return accessToken
+    if (!refreshToken) return null
+    try {
+      const result = await spotifyService.refreshAccessToken(clientId, refreshToken)
+      spotifySet('spotify_access_token', result.access_token)
+      if (result.refresh_token) spotifySet('spotify_refresh_token', result.refresh_token)
+      spotifySet('spotify_expires_at', String(Date.now() + result.expires_in * 1000))
+      saveDb()
+      return result.access_token
+    } catch {
+      return null
+    }
+  }
+
+  ipcMain.handle('spotify:get-setup', () => {
+    const clientId = spotifyGet('spotify_client_id')
+    const isAuthenticated = !!(spotifyGet('spotify_access_token') && spotifyGet('spotify_refresh_token'))
+    return { clientId, isAuthenticated }
+  })
+
+  ipcMain.handle('spotify:save-client-id', (_event, clientId: string) => {
+    spotifySet('spotify_client_id', clientId)
+    saveDb()
+    return true
+  })
+
+  ipcMain.handle('spotify:start-auth', async () => {
+    const clientId = spotifyGet('spotify_client_id')
+    if (!clientId) throw new Error('No client ID configured')
+    const { code, verifier } = await spotifyService.startAuthFlow(clientId)
+    const tokens = await spotifyService.exchangeCode(clientId, code, verifier)
+    spotifySet('spotify_access_token', tokens.access_token)
+    spotifySet('spotify_refresh_token', tokens.refresh_token)
+    spotifySet('spotify_expires_at', String(Date.now() + tokens.expires_in * 1000))
+    saveDb()
+    return true
+  })
+
+  ipcMain.handle('spotify:get-player-state', async () => {
+    const token = await getValidSpotifyToken()
+    if (!token) return null
+    try {
+      return await spotifyService.getPlayerState(token)
+    } catch { return null }
+  })
+
+  ipcMain.handle('spotify:play', async () => {
+    const token = await getValidSpotifyToken()
+    if (token) await spotifyService.play(token).catch(() => {})
+  })
+
+  ipcMain.handle('spotify:pause', async () => {
+    const token = await getValidSpotifyToken()
+    if (token) await spotifyService.pause(token).catch(() => {})
+  })
+
+  ipcMain.handle('spotify:next', async () => {
+    const token = await getValidSpotifyToken()
+    if (token) await spotifyService.next(token).catch(() => {})
+  })
+
+  ipcMain.handle('spotify:previous', async () => {
+    const token = await getValidSpotifyToken()
+    if (token) await spotifyService.previous(token).catch(() => {})
+  })
+
+  ipcMain.handle('spotify:set-volume', async (_event, vol: number) => {
+    const token = await getValidSpotifyToken()
+    if (token) await spotifyService.setVolume(token, vol).catch(() => {})
+  })
+
+  ipcMain.handle('spotify:logout', () => {
+    execute('DELETE FROM settings WHERE key IN (?, ?, ?)',
+      ['spotify_access_token', 'spotify_refresh_token', 'spotify_expires_at'])
+    saveDb()
+    return true
   })
 
   // Try to load API key on startup
