@@ -42,7 +42,8 @@
 }
 
 .startLogo {
-  font-size: 14px;
+  display: flex;
+  align-items: center;
 }
 
 .startText {
@@ -86,8 +87,9 @@
 }
 
 .windowBtnIcon {
-  font-size: 12px;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
 }
 
 .windowBtnText {

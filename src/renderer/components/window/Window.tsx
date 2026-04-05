@@ -1,6 +1,7 @@
-import { useRef, useCallback, ReactNode } from 'react'
+import { useRef, useCallback, useEffect, ReactNode } from 'react'
 import { Rnd } from 'react-rnd'
 import { useDesktopStore, WindowState } from '@/stores/desktop'
+import { playSound } from '@/lib/sounds'
 import styles from './Window.module.css'
 
 interface WindowProps {
@@ -15,11 +16,16 @@ export default function Window({ windowState, icon, children, menuBar, statusBar
   const { focusWindow, closeWindow, minimizeWindow, maximizeWindow, restoreWindow, updateWindowPosition, updateWindowSize } = useDesktopStore()
   const rndRef = useRef<Rnd>(null)
 
+  useEffect(() => {
+    playSound('windowOpen')
+  }, [])
+
   const handleFocus = useCallback(() => {
     focusWindow(windowState.id)
   }, [focusWindow, windowState.id])
 
   const handleClose = useCallback(() => {
+    playSound('windowClose')
     closeWindow(windowState.id)
   }, [closeWindow, windowState.id])
 

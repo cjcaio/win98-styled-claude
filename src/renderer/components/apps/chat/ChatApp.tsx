@@ -1,7 +1,24 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useChatStore } from '@/stores/chat'
 import ReactMarkdown from 'react-markdown'
+import ChatIcon from '@/components/icons/ChatIcon'
+import ComputerIcon from '@/components/icons/ComputerIcon'
+import { playSound } from '@/lib/sounds'
 import styles from './ChatApp.module.css'
+
+function UserIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" shapeRendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="1" width="6" height="5" fill="#808080" />
+      <rect x="3" y="2" width="8" height="4" fill="#C0C0C0" />
+      <rect x="4" y="1" width="6" height="1" fill="#C0C0C0" />
+      <rect x="3" y="5" width="8" height="1" fill="#808080" />
+      <rect x="1" y="7" width="12" height="6" fill="#808080" />
+      <rect x="2" y="7" width="10" height="6" fill="#C0C0C0" />
+      <rect x="2" y="7" width="10" height="1" fill="#808080" />
+    </svg>
+  )
+}
 
 export default function ChatApp() {
   const {
@@ -12,6 +29,7 @@ export default function ChatApp() {
   const [input, setInput] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const prevStreamingRef = useRef(false)
 
   useEffect(() => {
     loadChats()
@@ -20,6 +38,14 @@ export default function ChatApp() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, streamingContent])
+
+  // Play notify sound when Claude finishes responding
+  useEffect(() => {
+    if (prevStreamingRef.current && !isStreaming) {
+      playSound('notify')
+    }
+    prevStreamingRef.current = isStreaming
+  }, [isStreaming])
 
   const handleSend = useCallback(async () => {
     const trimmed = input.trim()
@@ -41,7 +67,7 @@ export default function ChatApp() {
       {/* Sidebar */}
       <div className={styles.sidebar}>
         <button className={`win98-button ${styles.newChatBtn}`} onClick={() => createChat()}>
-          📝 New Chat
+          <ChatIcon size={14} /> New Chat
         </button>
         <div className={styles.chatList}>
           {chats.map((chat) => (
@@ -54,7 +80,7 @@ export default function ChatApp() {
                 if (confirm(`Delete "${chat.name}"?`)) deleteChat(chat.id)
               }}
             >
-              <span className={styles.chatItemIcon}>💬</span>
+              <span className={styles.chatItemIcon}><ChatIcon size={14} /></span>
               <span className={styles.chatItemName}>{chat.name}</span>
             </div>
           ))}
@@ -72,7 +98,7 @@ export default function ChatApp() {
             <div className={styles.loading}>Loading messages...</div>
           ) : messages.length === 0 && !activeChatId ? (
             <div className={styles.welcome}>
-              <div className={styles.welcomeIcon}>☁</div>
+              <div className={styles.welcomeIcon}><ComputerIcon size={48} /></div>
               <h2 className={styles.welcomeTitle}>Welcome to Claude98</h2>
               <p className={styles.welcomeText}>
                 Start a new conversation or select one from the sidebar.
@@ -84,7 +110,10 @@ export default function ChatApp() {
                 <div key={msg.id} className={`${styles.message} ${styles[msg.role]}`}>
                   <div className={styles.messageHeader}>
                     <span className={styles.messageRole}>
-                      {msg.role === 'user' ? '👤 You' : '☁ Claude'}
+                      {msg.role === 'user'
+                        ? <><UserIcon /> You</>
+                        : <><ComputerIcon size={14} /> Claude</>
+                      }
                     </span>
                     <span className={styles.messageTime}>
                       {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -100,7 +129,7 @@ export default function ChatApp() {
               {isStreaming && (
                 <div className={`${styles.message} ${styles.assistant}`}>
                   <div className={styles.messageHeader}>
-                    <span className={styles.messageRole}>☁ Claude</span>
+                    <span className={styles.messageRole}><ComputerIcon size={14} /> Claude</span>
                     <span className={styles.messageTime}>typing...</span>
                   </div>
                   <div className={styles.messageContent}>

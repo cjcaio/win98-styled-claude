@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useDesktopStore } from '@/stores/desktop'
+import ComputerIcon from '@/components/icons/ComputerIcon'
+import { playSound } from '@/lib/sounds'
 import styles from './BootScreen.module.css'
 
 const BOOT_MESSAGES = [
@@ -27,6 +29,7 @@ export default function BootScreen() {
     }, BOOT_DURATION / BOOT_MESSAGES.length)
 
     const exitTimer = setTimeout(() => {
+      playSound('startup')
       setExiting(true)
       setTimeout(() => setBoot(true), 500)
     }, BOOT_DURATION)
@@ -43,7 +46,7 @@ export default function BootScreen() {
         {/* Logo */}
         <div className={styles.logo}>
           <div className={styles.logoIcon}>
-            <span className={styles.logoCloud}>☁</span>
+            <ComputerIcon size={64} />
           </div>
           <h1 className={styles.logoText}>Claude<span className={styles.logo98}>98</span></h1>
         </div>

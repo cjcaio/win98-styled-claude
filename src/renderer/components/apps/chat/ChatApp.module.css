@@ -20,6 +20,10 @@
   min-width: unset;
   width: calc(100% - 8px);
   font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: center;
 }
 
 .chatList {
@@ -49,8 +53,9 @@
 }
 
 .chatItemIcon {
-  font-size: 12px;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
 }
 
 .chatItemName {
@@ -120,6 +125,9 @@
 
 .messageRole {
   font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .messageTime {

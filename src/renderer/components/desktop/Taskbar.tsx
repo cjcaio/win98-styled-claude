@@ -1,7 +1,21 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useDesktopStore } from '@/stores/desktop'
 import StartMenu from './StartMenu'
+import ComputerIcon from '@/components/icons/ComputerIcon'
+import ChatIcon from '@/components/icons/ChatIcon'
+import FolderIcon from '@/components/icons/FolderIcon'
+import RecycleBinIcon from '@/components/icons/RecycleBinIcon'
+import SettingsIcon from '@/components/icons/SettingsIcon'
 import styles from './Taskbar.module.css'
+
+function appIcon(appId: string) {
+  switch (appId) {
+    case 'chat':        return <ChatIcon size={14} />
+    case 'explorer':    return <FolderIcon size={14} />
+    case 'recycle-bin': return <RecycleBinIcon size={14} />
+    default:            return <SettingsIcon size={14} />
+  }
+}
 
 export default function Taskbar() {
   const { windows, startMenuOpen, toggleStartMenu, focusWindow, restoreWindow } = useDesktopStore()
@@ -36,7 +50,7 @@ export default function Taskbar() {
           className={`${styles.startBtn} ${startMenuOpen ? styles.startBtnActive : ''}`}
           onClick={handleStartClick}
         >
-          <span className={styles.startLogo}>☁</span>
+          <span className={styles.startLogo}><ComputerIcon size={18} /></span>
           <span className={styles.startText}>Start</span>
         </button>
 
@@ -51,9 +65,7 @@ export default function Taskbar() {
               className={`${styles.windowBtn} ${!w.isMinimized ? styles.windowBtnActive : ''}`}
               onClick={() => handleTaskClick(w.id, w.isMinimized)}
             >
-              <span className={styles.windowBtnIcon}>
-                {w.appId === 'chat' ? '💬' : w.appId === 'explorer' ? '📁' : w.appId === 'recycle-bin' ? '🗑️' : '⚙️'}
-              </span>
+              <span className={styles.windowBtnIcon}>{appIcon(w.appId)}</span>
               <span className={styles.windowBtnText}>{w.title}</span>
             </button>
           ))}

@@ -1,9 +1,10 @@
-import { useState, useCallback, CSSProperties } from 'react'
+import { useState, useCallback, CSSProperties, ReactNode } from 'react'
+import { playSound } from '@/lib/sounds'
 import styles from './DesktopIcon.module.css'
 
 interface DesktopIconProps {
   label: string
-  icon: string
+  icon: ReactNode
   style?: CSSProperties
   onDoubleClick: () => void
 }
@@ -14,10 +15,12 @@ export default function DesktopIcon({ label, icon, style, onDoubleClick }: Deskt
   const handleClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
     setSelected(true)
+    playSound('click')
   }, [])
 
   const handleDoubleClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
+    playSound('windowOpen')
     onDoubleClick()
   }, [onDoubleClick])
 

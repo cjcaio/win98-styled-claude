@@ -63,10 +63,11 @@
 }
 
 .itemIcon {
-  font-size: 22px;
   width: 28px;
-  text-align: center;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .itemLabel {
