@@ -54,9 +54,6 @@ export default function Taskbar() {
           <span className={styles.startText}>Start</span>
         </button>
 
-        {/* Divider */}
-        <div className="win98-divider-v" />
-
         {/* Window list */}
         <div className={styles.windowList}>
           {windows.map((w) => (

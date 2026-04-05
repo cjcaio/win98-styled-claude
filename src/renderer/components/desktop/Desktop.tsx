@@ -1,4 +1,4 @@
-import { useCallback, ReactNode, ComponentType } from 'react'
+import { useCallback, useEffect, useState, ReactNode, ComponentType } from 'react'
 import { useDesktopStore, AppId } from '@/stores/desktop'
 import DesktopIcon from './DesktopIcon'
 import Taskbar from './Taskbar'
@@ -36,13 +36,27 @@ const APP_ICONS: Record<AppId, ReactNode> = {
 
 export default function Desktop() {
   const { windows, openApp, closeStartMenu } = useDesktopStore()
+  const [wallpaper, setWallpaper] = useState<string | null>(null)
+
+  useEffect(() => {
+    window.api.getWallpaper().then((data) => setWallpaper(data))
+  }, [])
 
   const handleDesktopClick = useCallback(() => {
     closeStartMenu()
   }, [closeStartMenu])
 
+  const desktopStyle = wallpaper
+    ? {
+        backgroundImage: `url(${wallpaper})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }
+    : undefined
+
   return (
-    <div className={styles.desktop} onClick={handleDesktopClick}>
+    <div className={styles.desktop} style={desktopStyle} onClick={handleDesktopClick}>
       {/* Desktop icons */}
       <div className={styles.icons}>
         {ICONS.map((item) => (

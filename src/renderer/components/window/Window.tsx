@@ -45,7 +45,7 @@ export default function Window({ windowState, icon, children, menuBar, statusBar
 
   const position = windowState.isMaximized ? { x: 0, y: 0 } : { x: windowState.x, y: windowState.y }
   const size = windowState.isMaximized
-    ? { width: '100%', height: 'calc(100vh - 32px)' }
+    ? { width: '100%', height: 'calc(100vh - 34px)' }
     : { width: windowState.width, height: windowState.height }
 
   return (

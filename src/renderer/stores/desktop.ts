@@ -20,6 +20,7 @@ interface DesktopState {
   nextZIndex: number
   startMenuOpen: boolean
   booted: boolean
+  loggedIn: boolean
 
   // Actions
   openApp: (appId: AppId) => void
@@ -33,6 +34,7 @@ interface DesktopState {
   toggleStartMenu: () => void
   closeStartMenu: () => void
   setBoot: (booted: boolean) => void
+  setLoggedIn: (loggedIn: boolean) => void
 }
 
 const APP_DEFAULTS: Record<AppId, { title: string; width: number; height: number }> = {
@@ -49,6 +51,7 @@ export const useDesktopStore = create<DesktopState>((set, get) => ({
   nextZIndex: 100,
   startMenuOpen: false,
   booted: false,
+  loggedIn: false,
 
   openApp: (appId) => {
     const state = get()
@@ -161,5 +164,9 @@ export const useDesktopStore = create<DesktopState>((set, get) => ({
 
   setBoot: (booted) => {
     set({ booted })
+  },
+
+  setLoggedIn: (loggedIn) => {
+    set({ loggedIn })
   }
 }))

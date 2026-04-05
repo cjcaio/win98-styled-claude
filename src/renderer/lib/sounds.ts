@@ -1,4 +1,4 @@
-type SoundName = 'startup' | 'windowOpen' | 'windowClose' | 'click' | 'error' | 'notify'
+type SoundName = 'startup' | 'windowOpen' | 'windowClose' | 'click' | 'error' | 'notify' | 'login'
 
 let audioCtx: AudioContext | null = null
 
@@ -81,6 +81,14 @@ export function playSound(name: SoundName): void {
         // Soft double-bell ding
         tone(ctx, 880,  t + 0.00, 0.12, 'sine', 0.18)
         tone(ctx, 1108, t + 0.10, 0.22, 'sine', 0.14)
+        break
+
+      case 'login':
+        // Welcoming 3-note ascending fanfare (XP login feel)
+        tone(ctx, 523, t + 0.00, 0.15, 'sine', 0.20)  // C5
+        tone(ctx, 659, t + 0.14, 0.15, 'sine', 0.22)  // E5
+        tone(ctx, 784, t + 0.28, 0.40, 'sine', 0.25)  // G5
+        tone(ctx, 523, t + 0.28, 0.40, 'sine', 0.10)  // C5 harmony
         break
     }
   } catch {

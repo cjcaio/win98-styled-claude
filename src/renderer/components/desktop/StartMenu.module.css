@@ -1,6 +1,6 @@
 .menu {
   position: fixed;
-  bottom: 32px;
+  bottom: 34px;
   left: 2px;
   z-index: var(--z-start-menu);
   display: flex;

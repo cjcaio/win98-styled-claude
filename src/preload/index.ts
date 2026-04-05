@@ -47,7 +47,11 @@ const api = {
   minimizeWindow: () => ipcRenderer.invoke('window:minimize'),
   maximizeWindow: () => ipcRenderer.invoke('window:maximize'),
   closeWindow: () => ipcRenderer.invoke('window:close'),
-  isMaximized: () => ipcRenderer.invoke('window:is-maximized')
+  isMaximized: () => ipcRenderer.invoke('window:is-maximized'),
+
+  // Assets
+  getPfp: (): Promise<string | null> => ipcRenderer.invoke('assets:get-pfp'),
+  getWallpaper: (): Promise<string | null> => ipcRenderer.invoke('assets:get-wallpaper')
 }
 
 contextBridge.exposeInMainWorld('api', api)

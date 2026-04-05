@@ -1,8 +1,34 @@
-import { ipcMain, BrowserWindow, safeStorage } from 'electron'
+import { ipcMain, BrowserWindow, safeStorage, app } from 'electron'
+import { join } from 'path'
+import { existsSync, readFileSync } from 'fs'
 import { initClaude, isClaudeReady, sendMessage } from '../services/claude'
 import * as chatsRepo from '../database/repositories/chats'
 import * as filesRepo from '../database/repositories/files'
 import { queryOne, execute, saveDb } from '../database/connection'
+
+function getResourcesDir(): string {
+  return app.isPackaged ? process.resourcesPath : join(app.getAppPath(), 'resources')
+}
+
+function findAsset(baseName: string, exts: string[]): string | null {
+  const dir = getResourcesDir()
+  for (const ext of exts) {
+    const p = join(dir, `${baseName}${ext}`)
+    if (existsSync(p)) return p
+  }
+  return null
+}
+
+function fileToDataUrl(filePath: string): string {
+  const ext = filePath.split('.').pop()?.toLowerCase() ?? ''
+  const mime =
+    ext === 'png' ? 'image/png' :
+    ext === 'gif' ? 'image/gif' :
+    ext === 'webp' ? 'image/webp' :
+    'image/jpeg'
+  const data = readFileSync(filePath).toString('base64')
+  return `data:${mime};base64,${data}`
+}
 
 export function registerIpcHandlers(): void {
   // ─── Settings ───────────────────────────────────────────
@@ -134,6 +160,17 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle('window:is-maximized', (event) => {
     return BrowserWindow.fromWebContents(event.sender)?.isMaximized() ?? false
+  })
+
+  // ─── Assets (pfp / wallpaper) ───────────────────────────
+  ipcMain.handle('assets:get-pfp', () => {
+    const path = findAsset('pfp', ['.png', '.jpg', '.jpeg', '.gif', '.webp'])
+    return path ? fileToDataUrl(path) : null
+  })
+
+  ipcMain.handle('assets:get-wallpaper', () => {
+    const path = findAsset('wallpaper', ['.jpg', '.jpeg', '.png', '.webp', '.bmp'])
+    return path ? fileToDataUrl(path) : null
   })
 
   // Try to load API key on startup
