@@ -7,6 +7,9 @@ const api = {
   getApiKey: (): Promise<string | null> => ipcRenderer.invoke('settings:get-api-key'),
   setApiKey: (key: string): Promise<boolean> => ipcRenderer.invoke('settings:set-api-key', key),
   clearApiKey: (): Promise<boolean> => ipcRenderer.invoke('settings:clear-api-key'),
+  getGroqKey: (): Promise<string | null> => ipcRenderer.invoke('settings:get-groq-key'),
+  setGroqKey: (key: string): Promise<boolean> => ipcRenderer.invoke('settings:set-groq-key', key),
+  clearGroqKey: (): Promise<boolean> => ipcRenderer.invoke('settings:clear-groq-key'),
   getSetting: (key: string): Promise<string | null> => ipcRenderer.invoke('settings:get', key),
   setSetting: (key: string, value: string): Promise<boolean> => ipcRenderer.invoke('settings:set', key, value),
 

@@ -1,7 +1,8 @@
 import { ipcMain, BrowserWindow, safeStorage, app } from 'electron'
 import { join } from 'path'
 import { existsSync, readFileSync } from 'fs'
-import { initClaude, resetClaude, isClaudeReady, sendMessage } from '../services/claude'
+import { initClaude, resetClaude, isClaudeReady, sendMessage as claudeSend } from '../services/claude'
+import { initGroq, resetGroq, isGroqReady, sendMessage as groqSend } from '../services/groq'
 import * as spotifyService from '../services/spotify'
 import * as chatsRepo from '../database/repositories/chats'
 import * as filesRepo from '../database/repositories/files'
@@ -62,6 +63,26 @@ export function registerIpcHandlers(): void {
     return true
   })
 
+  ipcMain.handle('settings:get-groq-key', () => {
+    const row = queryOne<{ value: string }>('SELECT value FROM settings WHERE key = ?', ['groq_api_key'])
+    return row?.value ?? null
+  })
+
+  ipcMain.handle('settings:set-groq-key', (_event, apiKey: string) => {
+    execute('DELETE FROM settings WHERE key = ?', ['groq_api_key'])
+    if (apiKey) execute('INSERT INTO settings (key, value) VALUES (?, ?)', ['groq_api_key', apiKey])
+    saveDb()
+    initGroq(apiKey)
+    return true
+  })
+
+  ipcMain.handle('settings:clear-groq-key', () => {
+    execute('DELETE FROM settings WHERE key = ?', ['groq_api_key'])
+    saveDb()
+    resetGroq()
+    return true
+  })
+
   ipcMain.handle('settings:get', (_event, key: string) => {
     const row = queryOne<{ value: string }>('SELECT value FROM settings WHERE key = ?', [key])
     return row?.value ?? null
@@ -74,15 +95,22 @@ export function registerIpcHandlers(): void {
     return true
   })
 
-  // ─── Claude ─────────────────────────────────────────────
-  ipcMain.handle('claude:is-ready', () => isClaudeReady())
+  // ─── Claude / Groq ──────────────────────────────────────
+  ipcMain.handle('claude:is-ready', () => isClaudeReady() || isGroqReady())
 
   ipcMain.handle('claude:send', async (event, chatId: string, messages: Array<{ role: 'user' | 'assistant'; content: string }>, model?: string) => {
     const window = BrowserWindow.fromWebContents(event.sender)
     if (!window) throw new Error('No window found')
 
     try {
-      const response = await sendMessage({ chatId, messages, model, window })
+      let response: string
+      if (isClaudeReady()) {
+        response = await claudeSend({ chatId, messages, model, window })
+      } else if (isGroqReady()) {
+        response = await groqSend({ chatId, messages, model, window })
+      } else {
+        throw new Error('No AI provider configured. Set an API key in Settings.')
+      }
       return { success: true, content: response }
     } catch (error: any) {
       return { success: false, error: error.message }
@@ -274,7 +302,7 @@ export function registerIpcHandlers(): void {
     return true
   })
 
-  // Try to load API key on startup
+  // Try to load API keys on startup
   try {
     const row = queryOne<{ value: string }>('SELECT value FROM settings WHERE key = ?', ['api_key_encrypted'])
     if (row) {
@@ -282,6 +310,12 @@ export function registerIpcHandlers(): void {
       initClaude(decrypted)
     }
   } catch {
-    // No API key set yet — that's fine
+    // No Claude key set yet — that's fine
+  }
+  try {
+    const groqRow = queryOne<{ value: string }>('SELECT value FROM settings WHERE key = ?', ['groq_api_key'])
+    if (groqRow) initGroq(groqRow.value)
+  } catch {
+    // No Groq key set yet — that's fine
   }
 }

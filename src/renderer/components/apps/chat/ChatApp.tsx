@@ -36,15 +36,14 @@ function NoApiKeyScreen() {
 
       <div className={styles.noKeyBody}>
         <p>
-          Claude Chat requires an <strong>Anthropic API key</strong> to work.
-          Get one at <em>console.anthropic.com</em>, then add it in the Control Panel.
+          No AI key configured. Add one in the <strong>Control Panel</strong>.
         </p>
 
         <div className={styles.noKeyNote}>
-          <strong>⚠ Claude Pro ≠ API Access</strong>
+          <strong>💡 Groq is free</strong>
           <p>
-            A Claude Pro subscription does not include API credits —
-            API access is billed separately at <em>console.anthropic.com</em>.
+            Sign up at <em>console.groq.com</em> with your Google account —
+            no credit card needed. Then paste your key in Control Panel.
           </p>
         </div>
 
